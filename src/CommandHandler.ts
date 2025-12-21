@@ -6,7 +6,8 @@ export type CommandsRegistry = Record<string, CommandHandler>
 
 export function handlerLogin(cmdName: string, ...args: string[]) {
     if (args.length < 1) {
-        throw new Error("login command requires username as parameter!");
+        console.log("login command requires username as parameter!");
+        process.exit(1);
     } else {
         const username = args[0];
         setUser(username);
@@ -19,6 +20,6 @@ export function registerCommand(registry: CommandsRegistry, cmdName: string, han
     registry[cmdName] = handler;
 };
 
-// export function runCommand(registry: CommandsRegistry, cmdName: string, ...args: string[]) {
-//     registry[cmdName](args);
-// }
+export function runCommand(registry: CommandsRegistry, cmdName: string, ...args: string[]) {
+    registry[cmdName](cmdName, ...args);
+}
