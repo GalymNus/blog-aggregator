@@ -3,21 +3,26 @@ import os from "os";
 import path from "path";
 
 type ConfigType = {
-    current_user_name: string;
-    db_url: string
+    currentUserName: string;
+    dbUrl: string
 }
 
 
 function getFilePath() {
-    return `${os.homedir()}/.gatorconfig.json`;
+    return path.join(os.homedir(), ".gatorconfig.json");
 }
 
-export function readConfig(): ConfigType | void {
+export function readConfig(): ConfigType {
     const file = fs.readFileSync(getFilePath());
     return JSON.parse(file.toLocaleString());
 }
 
-// function writeConfig(data: ConfigType) {
-//     const file = fs.readFileSync(getFilePath());
-//     fs.writeFileSync(getFilePath(), file);
-// }
+export function writeConfig(data: ConfigType) {
+    fs.writeFileSync(getFilePath(), JSON.stringify(data));
+};
+
+export function setUser(userName: string): void {
+    const config = readConfig();
+    config.currentUserName = userName;
+    writeConfig(config);
+}

@@ -1,8 +1,9 @@
-import { readConfig } from './config';
+import { CommandsRegistry, registerCommand, handlerLogin } from "./CommandHandler";
 
 function main() {
-    const config = readConfig();
-    console.log("config", config);
+    const commandRegistry: CommandsRegistry = {};
+    registerCommand(commandRegistry, "login", handlerLogin);
+    console.log(process.env);
 }
 
 main();
