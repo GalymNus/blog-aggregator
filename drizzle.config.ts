@@ -5,7 +5,7 @@ const url = readConfig().dbUrl;
 
 export default defineConfig({
   schema: "src/lib/db",
-  out: "src/lib/db/out",
+  out: "src/lib/db/migrations",
   dialect: "postgresql",
   dbCredentials: {
     url: url
