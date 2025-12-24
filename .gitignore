@@ -1,4 +1,4 @@
 node_modules
 package-lock.json
-src/lib/db/out
+src/lib/db/migrations
 commands.md
