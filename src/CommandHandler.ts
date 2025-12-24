@@ -1,6 +1,7 @@
 import { setUser, readConfig } from './config';
 import { createUser, getUserByName, resetUsers, getUsers, getUserById } from './lib/db/queries/users';
-import { createFeed, getFeeds } from './lib/db/queries/feeds';
+import { createFeed, getFeeds, getFeedByURL } from './lib/db/queries/feeds';
+import { createFeedFollow, getUserFeedFollows } from "./lib/db/queries/feedFollows";
 import { fetchFeed } from "./RSSfeed";
 
 type CommandHandler = (cmd: string, ...args: string[]) => Promise<void>;
@@ -73,20 +74,56 @@ export async function handlerCreateFeed(cmdName: string, ...args: string[]) {
         process.exit(1);
     } else {
         const currentUserName = readConfig().currentUserName;
+        const [name, url] = args;
         const user = await getUserByName(currentUserName);
-        const text = await createFeed(args[0], args[1], user.id);
+        const feed = await createFeed(name, url, user.id);
+        await createFeedFollow(user.id, feed.id);
+        console.log(`${currentUserName} has created new feed ${name} and follows it.`);
     }
 }
 
 export async function handlerGetFeeds(cmdName: string, ...args: string[]) {
     const feeds = await getFeeds();
-    for (let feed in feeds) {
-        const { name, url, userId } = feeds[feed];
+    console.log("=> List of feeds:")
+    for (let feedIndex in feeds) {
+        const { name, url, userId } = feeds[feedIndex];
         const user = await getUserById(userId);
-        console.log(`${feed + 1}| ${name} from ${url} by ${user.name}`);
+        console.log(`${parseInt(feedIndex) + 1}| ${name} from ${url} by ${user.name}`);
     }
 }
 
+export async function handleSubscribeToFeed(cmdName: string, ...args: string[]) {
+    if (args.length < 1) {
+        console.log("follow command requires feed name as parameter!");
+        process.exit(1);
+    } else {
+        const feedURL = args[0];
+        try {
+            const currentUserName = readConfig().currentUserName;
+            const user = await getUserByName(currentUserName);
+            const feed = await getFeedByURL(feedURL);
+            await createFeedFollow(user.id, feed.id);
+            console.log(`${currentUserName} now follows ${feed.name}`);
+        } catch (e) {
+            console.log("Error: ", e);
+        }
+    }
+}
+
+export async function handlerGetUserFeeds(cmdName: string, ...args: string[]) {
+    try {
+        const currentUserName = readConfig().currentUserName;
+        const user = await getUserByName(currentUserName);
+        const userFeeds = await getUserFeedFollows(user.id);
+        console.log(`${currentUserName} follows:`);
+        for (const feedIndex in userFeeds) {
+            const { users, feeds } = userFeeds[feedIndex];
+            console.log(`   ${parseInt(feedIndex) + 1}: ${feeds.name} by [${users.name}]`)
+        }
+    } catch (e) {
+        console.log("Error: ", e);
+    }
+}
 
 
 export async function registerCommand(registry: CommandsRegistry, cmdName: string, handler: CommandHandler) {
