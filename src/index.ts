@@ -1,18 +1,19 @@
 import { CommandsRegistry, registerCommand, handleSubscribeToFeed, handlerGetUserFeeds, handlerLogin, runCommand, handlerCreateFeed, handlerResetUsers, handlerGetUsers, handlerAggregation, handlerRegister, handlerGetFeeds } from "./CommandHandler";
+import { userAuthMiddleware } from './helpers/userLogin';
 
 async function main() {
     const commandRegistry: CommandsRegistry = {};
     registerCommand(commandRegistry, "login", handlerLogin);
     registerCommand(commandRegistry, "register", handlerRegister);
     registerCommand(commandRegistry, "reset", handlerResetUsers);
-    // TODO: handle empty users
-    registerCommand(commandRegistry, "users", (handlerGetUsers));
     registerCommand(commandRegistry, "agg", handlerAggregation);
-    registerCommand(commandRegistry, "addfeed", handlerCreateFeed);
+    // TODO: handle empty users
+    registerCommand(commandRegistry, "users", userAuthMiddleware(handlerGetUsers));
+    registerCommand(commandRegistry, "addfeed", userAuthMiddleware(handlerCreateFeed));
     // TODO: handle empty feeds
     registerCommand(commandRegistry, "feeds", handlerGetFeeds);
-    registerCommand(commandRegistry, "follow", handleSubscribeToFeed);
-    registerCommand(commandRegistry, "following", handlerGetUserFeeds);
+    registerCommand(commandRegistry, "follow", userAuthMiddleware(handleSubscribeToFeed));
+    registerCommand(commandRegistry, "following", userAuthMiddleware(handlerGetUserFeeds));
     const command = process.argv[2];
     if (!command) {
         console.log("Error: not enough arguments were provided");
