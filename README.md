@@ -1,4 +1,4 @@
-### Blog Aggregator agg [TypeScript];
+# Blog Aggregator agg [TypeScript];
 
 ## Description
 
@@ -6,7 +6,7 @@ The goal of the project is to build a cli tool that can keep track off RSS feeds
 
 ## Installation Instructions
 
-# Prerequisites
+## Prerequisites
 
 In your home directory create the file `.gator_config.json`. It will only contain one object with a maximum of two keys `dbUrl` and `currentUserName`. You do not need to set `currentUserName` manually. You will need to provide a connection string for connecting to the postgres database. As an example, your config might look like {"db_url":"postgres://user:password@localhost:5432/gator?sslmode=disable"}
 
