@@ -1,10 +1,10 @@
 import { XMLParser } from "fast-xml-parser";
 
-type ItemType = {
+export type ItemType = {
     title: string,
     link: string,
     description: string,
-    pubDate: string,
+    pubDate: Date,
 }
 
 type RssResultType = {

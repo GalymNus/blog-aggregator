@@ -12,6 +12,7 @@ import {
     handleSubscribeToFeed,
     registerCommand,
     runCommand,
+    handlerBrowseUserPosts,
 } from "./CommandHandler";
 import { userAuthMiddleware } from './helpers/userLogin';
 
@@ -27,6 +28,7 @@ async function main() {
     registerCommand(commandRegistry, "follow", userAuthMiddleware(handleSubscribeToFeed));
     registerCommand(commandRegistry, "unfollow", userAuthMiddleware(handlerUnfollowFeed));
     registerCommand(commandRegistry, "following", userAuthMiddleware(handlerGetUserFeeds));
+    registerCommand(commandRegistry, "browse", userAuthMiddleware(handlerBrowseUserPosts));
     const command = process.argv[2];
     if (!command) {
         console.log("Error: not enough arguments were provided");
