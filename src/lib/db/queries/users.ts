@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "..";
-import { users } from "../schema";
+import { users, feeds, feedFollows, posts } from "../schema";
 import { UserType } from "src/helpers/userLogin";
 
 interface UserFullType extends UserType {
@@ -35,6 +35,9 @@ export async function getUserById(id: string) {
 export async function resetUsers(): Promise<boolean> {
     try {
         await db.delete(users);
+        await db.delete(feeds);
+        await db.delete(feedFollows);
+        await db.delete(posts);
         return true;
     } catch (e) {
         console.log("Error: ", e);
