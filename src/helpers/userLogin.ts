@@ -4,7 +4,6 @@ import { getUserByName } from "src/lib/db/queries/users";
 
 
 export type UserCommandHandlerType = (
-    cmdName: string,
     user: UserType,
     ...args: string[]
 ) => Promise<void>;
@@ -16,7 +15,7 @@ export type UserType = {
 }
 
 export function userAuthMiddleware(handler: UserCommandHandlerType): CommandHandler {
-    return async (cmdName: string, ...args: string[]) => {
+    return async (...args: string[]) => {
         const { currentUserName } = readConfig();
         if (!currentUserName) {
             throw new Error("User not logged in");
@@ -25,6 +24,6 @@ export function userAuthMiddleware(handler: UserCommandHandlerType): CommandHand
         if (!user) {
             throw new Error(`User ${currentUserName} not found`);
         }
-        return await handler(cmdName, user, ...args);
+        return await handler(user, ...args);
     };
 }

@@ -1,4 +1,18 @@
-import { CommandsRegistry, registerCommand, handleSubscribeToFeed, handlerGetUserFeeds, handlerLogin, runCommand, handlerCreateFeed, handlerResetUsers, handlerGetUsers, handlerAggregation, handlerRegister, handlerGetFeeds } from "./CommandHandler";
+import {
+    CommandsRegistry,
+    handlerAggregation,
+    handlerCreateFeed,
+    handlerGetFeeds,
+    handlerGetUserFeeds,
+    handlerGetUsers,
+    handlerLogin,
+    handlerRegister,
+    handlerResetUsers,
+    handlerUnfollowFeed,
+    handleSubscribeToFeed,
+    registerCommand,
+    runCommand,
+} from "./CommandHandler";
 import { userAuthMiddleware } from './helpers/userLogin';
 
 async function main() {
@@ -7,12 +21,11 @@ async function main() {
     registerCommand(commandRegistry, "register", handlerRegister);
     registerCommand(commandRegistry, "reset", handlerResetUsers);
     registerCommand(commandRegistry, "agg", handlerAggregation);
-    // TODO: handle empty users
     registerCommand(commandRegistry, "users", userAuthMiddleware(handlerGetUsers));
     registerCommand(commandRegistry, "addfeed", userAuthMiddleware(handlerCreateFeed));
-    // TODO: handle empty feeds
     registerCommand(commandRegistry, "feeds", handlerGetFeeds);
     registerCommand(commandRegistry, "follow", userAuthMiddleware(handleSubscribeToFeed));
+    registerCommand(commandRegistry, "unfollow", userAuthMiddleware(handlerUnfollowFeed));
     registerCommand(commandRegistry, "following", userAuthMiddleware(handlerGetUserFeeds));
     const command = process.argv[2];
     if (!command) {
